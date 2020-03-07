@@ -3,6 +3,11 @@ from cerberus import Validator
 
 class TaskValidator:
     schema = {
+        'id': {
+            'type': 'integer',
+            'empty': True,
+            'nullable': False
+        },
         'description': {
             'type': 'string',
             'empty': False,

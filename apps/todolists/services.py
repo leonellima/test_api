@@ -5,6 +5,13 @@ from .validators import TaskValidator
 class TaskService:
     model = TodoTask
 
+    def get_object(self, pk):
+        return self.model.objects.filter(pk=pk).first()
+
+    def update_object(self, pk, data):
+        self.model.objects.filter(pk=pk).update(**data)
+        return self.model.objects.filter(pk=pk).first()
+
     def create(self, data):
         validator = TaskValidator(data)
         if validator.validate():
@@ -15,7 +22,7 @@ class TaskService:
         return self.model.objects.all()
 
     def retrieve(self, pk):
-        task = self.model.objects.filter(pk=pk).first()
+        task = self.get_object(pk)
 
         if task is None:
             raise self.model.DoesNotExist("Object doesn't exist")
@@ -23,18 +30,13 @@ class TaskService:
         return task
 
     def update(self, pk, data):
-        validator = TaskValidator(data)
-        if validator.validate():
-            task = self.model.objects.filter(pk=pk).first()
-            if task is None:
-                raise self.model.DoesNotExist("Object doesn't exist")
-            self.model.objects.filter(pk=pk).update(**data)
-            task.refresh_from_db()
-            return task
-        raise Exception("Invalid data")
+        task = self.get_object(pk)
+        if task is None:
+            raise self.model.DoesNotExist("Object doesn't exist")
+        return self.update_object(pk, data)
 
     def delete(self, pk):
-        task = self.model.objects.filter(pk=pk).first()
+        task = self.get_object(pk)
 
         if task is None:
             raise self.model.DoesNotExist("Object doesn't exist")

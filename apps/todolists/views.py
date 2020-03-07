@@ -60,6 +60,9 @@ class TodoTaskView(GenericViewSet):
             status=status.HTTP_200_OK
         )
 
+    def partial_update(self, request, pk=None):
+        return self.update(request, pk)
+
     def destroy(self, request, pk=None):
         service = TaskService()
         try:
@@ -69,4 +72,4 @@ class TodoTaskView(GenericViewSet):
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-        return Response("Task Deleted", status=status.HTTP_200_OK)
+        return Response("Task Deleted", status=status.HTTP_204_NO_CONTENT)
